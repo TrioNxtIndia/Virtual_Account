@@ -1,0 +1,21 @@
+.card-bg {
+  color: #f1f1f1 !important;
+  background-image: linear-gradient(to right bottom, #00528f, #004987, #00407e, #003876, #002f6d);
+  /* box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12); */
+  outline: none;
+  border-radius: 12px !important;
+  border-top: 4px solid #3facff !important;
+
+  p {
+    margin-bottom: 5px;
+  }
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    
+    button {
+        font-weight: bold;
+    }
+}
