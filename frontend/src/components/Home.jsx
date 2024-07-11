@@ -3,7 +3,7 @@ import "../assets/Home.css";
 import API from "../Hook/Api";
 import { usePlaidLink } from "react-plaid-link";
 import image from "../assets/images/not_found.svg";
-import { ClimbingBoxLoader } from "react-spinners";
+import { PropagateLoader } from "react-spinners";
 
 function Home() {
   const [linkToken, setLinkToken] = useState();
@@ -16,7 +16,7 @@ function Home() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, 4000);
   }, []);
 
   useEffect(() => {
@@ -41,27 +41,30 @@ function Home() {
         public_token: publicToken,
         bankName: bankName,
       });
+      fetchAccounts();
       console.log("access-token*", accessToken);
     }
     fetchData();
   }, [publicToken, bankName]);
 
-  useEffect(() => {
-    async function fetchAccounts() {
-      try {
-        const response = await API.get("/accounts");
-        console.log(response);
-        const accountsData = response.map((item) => ({
-          accountName: item.accounts[0].name,
-          accountType: `${item.accounts[0].type} / ${item.accounts[0].subtype}`,
-          accountNumber: `**** **** ${item.accounts[0].mask}`,
-          balance: `${item.accounts[0].balances.available} ${item.accounts[0].balances.iso_currency_code}`,
-        }));
-        setAccounts(accountsData);
-      } catch (error) {
-        console.error("Error fetching accounts:", error.message);
-      }
+  async function fetchAccounts() {
+    try {
+      const response = await API.get("/accounts");
+      console.log(response);
+      const accountsData = response.map((item) => ({
+        bankName: item.bankName,
+        accountName: item.accounts[0].name,
+        accountType: `${item.accounts[0].type} / ${item.accounts[0].subtype}`,
+        accountNumber: `**** **** ${item.accounts[0].mask}`,
+        balance: `${item.accounts[0].balances.available} ${item.accounts[0].balances.iso_currency_code}`,
+      }));
+      setAccounts(accountsData);
+    } catch (error) {
+      console.error("Error fetching accounts:", error.message);
     }
+  }
+
+  useEffect(() => {
     fetchAccounts();
   }, []);
 
@@ -83,12 +86,11 @@ function Home() {
       {loading ? (
         <>
         <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
-            <ClimbingBoxLoader
+            <PropagateLoader
                 color={"#6f36d6"}
                 size={20}
             />
         </div>
-        <h5 className="text-center" style={{marginTop: "-100px"}}>Loading...</h5>
     </>
       ):
       (
@@ -101,7 +103,7 @@ function Home() {
                 <div key={index} className="col-md-4 col-12 mt-2">
                   <div className="card card-bg">
                     <div className="card-body">
-                      <h5 className="card-title text-center py-2">Bank Name</h5>
+                      <h5 className="card-title text-center py-2">{account.bankName}</h5>
                       {/* <p>
                         Account Name:{" "}
                         <span className="fw-bold ms-2">
