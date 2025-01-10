@@ -7,8 +7,6 @@ import { PropagateLoader } from "react-spinners";
 
 function Home() {
   const [linkToken, setLinkToken] = useState();
-  const [publicToken, setPublicToken] = useState();
-  const [bankName, setBankName] = useState();
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -30,22 +28,22 @@ function Home() {
   const { open, ready } = usePlaidLink({
     token: linkToken,
     onSuccess: (public_token, metadata) => {
-      setBankName(metadata.institution.name);
-      setPublicToken(public_token);
+      const fetchData = async () => {
+        try {
+          let accessToken = await API.post("/exchange_public_token", {
+            public_token: public_token,
+            bankName: metadata.institution.name,
+          });
+          fetchAccounts();
+          console.log("access-token*", accessToken);
+        } catch (error) {
+          console.error("Error fetching access token:", error);
+        }
+      };
+      fetchData();
     },
-  });
-
-  useEffect(() => {
-    async function fetchData() {
-      let accessToken = await API.post("/exchange_public_token", {
-        public_token: publicToken,
-        bankName: bankName,
-      });
-      fetchAccounts();
-      console.log("access-token*", accessToken);
-    }
-    fetchData();
-  }, [publicToken, bankName]);
+  }
+);
 
   async function fetchAccounts() {
     try {

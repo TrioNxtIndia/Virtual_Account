@@ -3,7 +3,6 @@ import statusCode from "../utils/statusCode.js";
 
 export const verifyUser = (req, res, next) => {
   const token = req.headers.authorization.split(' ')[1];;
-  console.log('token', token);
   if (!token)
     return res.status(statusCode.UNAUTHORIZED).json({ msg: "Unauthorized! Token not provided." });
   jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
